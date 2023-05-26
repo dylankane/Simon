@@ -1,6 +1,5 @@
 
-const { hasUncaughtExceptionCaptureCallback } = require("process");
-const { game, newGame, showScore, addTurn } = require("../game")
+const { game, newGame, showScore, addTurn, lightsOn, showTurns } = require("../game")
 
 beforeAll (() => {
     let fs = require("fs");
@@ -26,6 +25,9 @@ describe("game object contains correct keys", () => {
     test("choices contain correct ids", () =>{
         expect(game.choices).toEqual(["button1", "button2", "button3", "button4"]);
     });
+    test("TurnNumber key exists", () => {
+        expect("turnNumber" in game).toBe(true);
+    })
 });
 
 describe("newGame works correctly", () => {
@@ -48,6 +50,12 @@ describe("newGame works correctly", () => {
     test("Should display 0 for the element with the id of score", () => {
         expect(document.getElementById("score").innerText).toEqual(0);
     });
+    test("Expect data listener to be true", () => {
+        const elements = document.getElementsByClassName("circle");
+        for (let element of elements) {
+            expect(element.getAttribute("data-listener")).toEqual("true");
+        }
+    });
 });
 
 
@@ -67,6 +75,18 @@ describe("gameplay works correctly", () => {
         addTurn();
         expect(game.currentGame.length).toBe(2);
     });
-    test("Should add correct class")
+    test("Should add correct class to light up the buttons", () => {
+        let button = document.getElementById(game.currentGame[0]);
+        lightsOn(game.currentGame[0]);
+        expect(button.classList).toContain("light");
+    })
+    test("ShowTurns should update game.turnNumber", () => {
+        game.turnNumber = 42;
+        showTurns();
+        expect(game.turnNumber).toBe(0);
+            
+    })
 });
+
+
 
